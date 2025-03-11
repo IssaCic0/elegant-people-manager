@@ -8,6 +8,11 @@ import Index from "./pages/Index";
 import Employees from "./pages/Employees";
 import Departments from "./pages/Departments";
 import Attendance from "./pages/Attendance";
+import Leave from "./pages/Leave";
+import Documents from "./pages/Documents";
+import Settings from "./pages/Settings";
+import Help from "./pages/Help";
+import Profile from "./pages/Profile";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -23,7 +28,11 @@ const App = () => (
           <Route path="/employees" element={<Employees />} />
           <Route path="/departments" element={<Departments />} />
           <Route path="/attendance" element={<Attendance />} />
-          {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
+          <Route path="/leave" element={<Leave />} />
+          <Route path="/documents" element={<Documents />} />
+          <Route path="/settings" element={<Settings />} />
+          <Route path="/help" element={<Help />} />
+          <Route path="/profile" element={<Profile />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>
@@ -32,3 +41,4 @@ const App = () => (
 );
 
 export default App;
+
