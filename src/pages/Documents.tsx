@@ -90,7 +90,8 @@ const Documents = () => {
                           </button>
                         </td>
                       </tr>
-                    ))}
+                    );
+                  })}
                 </tbody>
               </table>
             </div>
@@ -102,4 +103,3 @@ const Documents = () => {
 };
 
 export default Documents;
-
