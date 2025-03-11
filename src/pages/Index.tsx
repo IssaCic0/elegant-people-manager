@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { Users, Building2, Clock, ArrowUpRight, Briefcase, Calendar, Percentage } from 'lucide-react';
+import { Users, Building2, Clock, ArrowUpRight, Briefcase, Calendar, Percent } from 'lucide-react';
 import MainLayout from '@/components/layout/MainLayout';
 import StatCard from '@/components/dashboard/StatCard';
 import EmployeeList from '@/components/dashboard/EmployeeList';
@@ -209,7 +209,7 @@ const Index = () => {
             <GlassCard className="p-4 hover-scale">
               <div className="flex flex-col items-center text-center">
                 <div className="w-10 h-10 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center mb-2">
-                  <Percentage className="w-5 h-5" />
+                  <Percent className="w-5 h-5" />
                 </div>
                 <div className="text-2xl font-bold">94%</div>
                 <div className="text-xs text-muted-foreground">员工满意度</div>
