@@ -1,69 +1,94 @@
-# Welcome to your Lovable project
+# 优雅的人事管理系统
 
-## Project info
+## 项目简介
 
-**URL**: https://lovable.dev/projects/7a4e8c87-0359-46ae-8a24-9098a296dfbd
+这是一个现代化的人事管理系统前端项目，采用最新的技术栈开发，提供优雅的用户界面和流畅的操作体验。
 
-## How can I edit this code?
+## 技术栈
 
-There are several ways of editing your application.
+- Vue 3 - 渐进式 JavaScript 框架
+- TypeScript - 带有类型检查的 JavaScript
+- Tailwind CSS - 实用优先的 CSS 框架
+- Vite - 下一代前端构建工具
+- shadcn-ui - 精美的 UI 组件库
 
-**Use Lovable**
+## 功能特性
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/7a4e8c87-0359-46ae-8a24-9098a296dfbd) and start prompting.
+- 📊 员工信息管理
+- 📅 考勤管理
+- 💰 薪资管理
+- 📝 绩效考核
+- 🔔 系统通知
+- 📈 数据统计报表
 
-Changes made via Lovable will be committed automatically to this repo.
+## 开始使用
 
-**Use your preferred IDE**
+确保你的开发环境中已安装：
+- Node.js (推荐 v16 或更高版本)
+- npm 或 yarn 或 pnpm
 
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
+```bash
+# 克隆项目
+git clone https://github.com/IssaCic0/elegant-people-manager.git
 
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
+# 进入项目目录
+cd elegant-people-manager
 
-Follow these steps:
+# 安装依赖
+npm install
+# 或者
+yarn install
+# 或者
+pnpm install
 
-```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
-
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
-
-# Step 3: Install the necessary dependencies.
-npm i
-
-# Step 4: Start the development server with auto-reloading and an instant preview.
+# 启动开发服务器
 npm run dev
+# 或者
+yarn dev
+# 或者
+pnpm dev
 ```
 
-**Edit a file directly in GitHub**
+## 项目结构
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
+```
+elegant-people-manager/
+├── src/                # 源代码目录
+├── public/            # 静态资源
+├── components/        # 公共组件
+├── views/            # 页面视图
+├── store/            # 状态管理
+├── api/              # API 接口
+├── utils/            # 工具函数
+└── types/            # TypeScript 类型定义
+```
 
-**Use GitHub Codespaces**
+## 开发规范
 
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
+- 遵循 Vue 3 组合式 API 风格
+- 使用 TypeScript 进行类型检查
+- 使用 ESLint 进行代码规范检查
+- 使用 Prettier 进行代码格式化
 
-## What technologies are used for this project?
+## 构建部署
 
-This project is built with .
+```bash
+# 构建生产环境版本
+npm run build
+# 或者
+yarn build
+# 或者
+pnpm build
+```
 
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
+## 贡献指南
 
-## How can I deploy this project?
+1. Fork 本仓库
+2. 创建你的特性分支 (git checkout -b feature/AmazingFeature)
+3. 提交你的更改 (git commit -m 'Add some AmazingFeature')
+4. 推送到分支 (git push origin feature/AmazingFeature)
+5. 开启一个 Pull Request
 
-Simply open [Lovable](https://lovable.dev/projects/7a4e8c87-0359-46ae-8a24-9098a296dfbd) and click on Share -> Publish.
+## 许可证
 
-## I want to use a custom domain - is that possible?
-
-We don't support custom domains (yet). If you want to deploy your project under your own domain then we recommend using Netlify. Visit our docs for more details: [Custom domains](https://docs.lovable.dev/tips-tricks/custom-domain/)
+MIT License - 详见 LICENSE 文件
