@@ -1,19 +1,31 @@
-
 import React from 'react';
 import { FileText, FileImage, FileVideo, Download, Search } from 'lucide-react';
 import MainLayout from '@/components/layout/MainLayout';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
+import { Button } from '@/components/ui/button';
+import { LucideIcon } from 'lucide-react';
+
+interface Document {
+  name: string;
+  type: 'pdf' | 'doc' | 'video' | 'image';
+  size: string;
+  uploadedAt: string;
+  category: string;
+  icon: LucideIcon;
+  url: string;
+}
 
 const Documents = () => {
-  const documents = [
+  const documents: Document[] = [
     { 
       name: '员工手册2024版.pdf',
       type: 'pdf',
       size: '2.5MB',
       uploadedAt: '2024-03-01',
       category: '规章制度',
-      icon: FileText
+      icon: FileText,
+      url: '/documents/员工手册2024版.pdf'
     },
     { 
       name: '入职材料清单.docx',
@@ -21,7 +33,8 @@ const Documents = () => {
       size: '568KB',
       uploadedAt: '2024-02-28',
       category: '入职材料',
-      icon: FileText
+      icon: FileText,
+      url: '/documents/入职材料清单.docx'
     },
     { 
       name: '企业文化宣传片.mp4',
@@ -29,7 +42,8 @@ const Documents = () => {
       size: '156MB',
       uploadedAt: '2024-02-25',
       category: '企业文化',
-      icon: FileVideo
+      icon: FileVideo,
+      url: '/documents/企业文化宣传片.mp4'
     },
     { 
       name: '公司logo素材.png',
@@ -37,9 +51,20 @@ const Documents = () => {
       size: '2.1MB',
       uploadedAt: '2024-02-20',
       category: '企业形象',
-      icon: FileImage
+      icon: FileImage,
+      url: '/documents/公司logo素材.png'
     },
   ];
+
+  const handleDownload = (doc: Document) => {
+    // 创建一个隐藏的a标签
+    const link = document.createElement('a');
+    link.href = doc.url;
+    link.download = doc.name;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
 
   return (
     <MainLayout>
@@ -85,9 +110,14 @@ const Documents = () => {
                         <td className="py-3 px-4">{doc.size}</td>
                         <td className="py-3 px-4">{doc.uploadedAt}</td>
                         <td className="py-3 px-4">
-                          <button className="text-primary hover:text-primary/80">
+                          <Button 
+                            variant="ghost" 
+                            size="icon"
+                            onClick={() => handleDownload(doc)}
+                            className="text-primary hover:text-primary/80"
+                          >
                             <Download className="h-4 w-4" />
-                          </button>
+                          </Button>
                         </td>
                       </tr>
                     );

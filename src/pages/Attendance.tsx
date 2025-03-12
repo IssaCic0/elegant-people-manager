@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import MainLayout from '@/components/layout/MainLayout';
 import GlassCard from '@/components/ui/GlassCard';
@@ -27,9 +26,31 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { Clock, Search, Filter, Calendar as CalendarIcon, Download, MoreHorizontal, FileText, CheckCircle2, XCircle, AlertCircle } from 'lucide-react';
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import { Label } from "@/components/ui/label";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+
+interface AttendanceRecord {
+  id: string;
+  name: string;
+  department: string;
+  date: string;
+  clockIn: string;
+  clockOut: string;
+  status: 'normal' | 'late' | 'early' | 'absent';
+  avatar: string;
+}
 
 // Mock attendance data
-const attendanceData = [
+const attendanceData: AttendanceRecord[] = [
   {
     id: '1',
     name: '张明',
@@ -122,6 +143,17 @@ const statusMap = {
 const Attendance = () => {
   const [date, setDate] = useState<Date | undefined>(new Date());
   const [searchValue, setSearchValue] = useState('');
+  const [isReportOpen, setIsReportOpen] = useState(false);
+  const [isDetailOpen, setIsDetailOpen] = useState(false);
+  const [isEditOpen, setIsEditOpen] = useState(false);
+  const [selectedRecord, setSelectedRecord] = useState<AttendanceRecord | null>(null);
+  const [editingRecord, setEditingRecord] = useState({
+    clockIn: '',
+    clockOut: '',
+    status: 'normal' as const,
+  });
+  const [reportType, setReportType] = useState('daily');
+  const [reportFormat, setReportFormat] = useState('excel');
   
   // Statistics for today
   const stats = {
@@ -137,6 +169,44 @@ const Attendance = () => {
            record.department.toLowerCase().includes(searchValue.toLowerCase());
   });
 
+  const handleExportReport = () => {
+    // 这里添加导出报表的逻辑
+    console.log('Exporting report:', { type: reportType, format: reportFormat });
+    setIsReportOpen(false);
+  };
+
+  const handleEditRecord = () => {
+    if (!selectedRecord || !editingRecord) return;
+    
+    const updatedAttendance = attendanceData.map(record => 
+      record.id === selectedRecord.id ? {
+        ...record,
+        clockIn: editingRecord.clockIn,
+        clockOut: editingRecord.clockOut,
+        status: editingRecord.status,
+      } : record
+    );
+    
+    // 在实际应用中，这里应该调用API更新数据
+    console.log('Updated attendance:', updatedAttendance);
+    setIsEditOpen(false);
+  };
+
+  const handleExportSingleRecord = (record: AttendanceRecord) => {
+    // 在实际应用中，这里应该调用API导出数据
+    const exportData = {
+      员工姓名: record.name,
+      部门: record.department,
+      日期: record.date,
+      上班打卡: record.clockIn,
+      下班打卡: record.clockOut,
+      状态: statusMap[record.status as keyof typeof statusMap].label,
+    };
+    
+    console.log('Exporting record:', exportData);
+    // 这里可以添加实际的导出逻辑
+  };
+
   return (
     <MainLayout>
       <GlassCard className="animate-fade-in mb-6">
@@ -146,12 +216,77 @@ const Attendance = () => {
             <p className="text-muted-foreground">查看和管理员工考勤记录</p>
           </div>
           
-          <div className="flex gap-2">
-            <Button className="whitespace-nowrap">
-              <FileText className="w-4 h-4 mr-2" />
-              考勤报表
-            </Button>
-          </div>
+          <Dialog open={isReportOpen} onOpenChange={setIsReportOpen}>
+            <DialogTrigger asChild>
+              <Button className="whitespace-nowrap">
+                <FileText className="w-4 h-4 mr-2" />
+                考勤报表
+              </Button>
+            </DialogTrigger>
+            <DialogContent>
+              <DialogHeader>
+                <DialogTitle>导出考勤报表</DialogTitle>
+                <DialogDescription>
+                  选择报表类型和导出格式。
+                </DialogDescription>
+              </DialogHeader>
+              <div className="grid gap-4 py-4">
+                <div className="grid gap-2">
+                  <Label>报表类型</Label>
+                  <Select value={reportType} onValueChange={setReportType}>
+                    <SelectTrigger>
+                      <SelectValue placeholder="选择报表类型" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="daily">日报表</SelectItem>
+                      <SelectItem value="weekly">周报表</SelectItem>
+                      <SelectItem value="monthly">月报表</SelectItem>
+                      <SelectItem value="quarterly">季度报表</SelectItem>
+                      <SelectItem value="yearly">年度报表</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div className="grid gap-2">
+                  <Label>导出格式</Label>
+                  <Select value={reportFormat} onValueChange={setReportFormat}>
+                    <SelectTrigger>
+                      <SelectValue placeholder="选择导出格式" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="excel">Excel</SelectItem>
+                      <SelectItem value="pdf">PDF</SelectItem>
+                      <SelectItem value="csv">CSV</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div className="space-y-1">
+                  <Label>报表内容包含</Label>
+                  <div className="grid grid-cols-2 gap-2 mt-2">
+                    <div className="flex items-center space-x-2">
+                      <input type="checkbox" id="attendance" className="rounded" defaultChecked />
+                      <label htmlFor="attendance" className="text-sm">考勤记录</label>
+                    </div>
+                    <div className="flex items-center space-x-2">
+                      <input type="checkbox" id="late" className="rounded" defaultChecked />
+                      <label htmlFor="late" className="text-sm">迟到统计</label>
+                    </div>
+                    <div className="flex items-center space-x-2">
+                      <input type="checkbox" id="leave" className="rounded" defaultChecked />
+                      <label htmlFor="leave" className="text-sm">请假记录</label>
+                    </div>
+                    <div className="flex items-center space-x-2">
+                      <input type="checkbox" id="overtime" className="rounded" defaultChecked />
+                      <label htmlFor="overtime" className="text-sm">加班统计</label>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <DialogFooter>
+                <Button variant="outline" onClick={() => setIsReportOpen(false)}>取消</Button>
+                <Button onClick={handleExportReport}>导出报表</Button>
+              </DialogFooter>
+            </DialogContent>
+          </Dialog>
         </div>
       </GlassCard>
       
@@ -315,9 +450,26 @@ const Attendance = () => {
                         </Button>
                       </DropdownMenuTrigger>
                       <DropdownMenuContent align="end">
-                        <DropdownMenuItem>查看详情</DropdownMenuItem>
-                        <DropdownMenuItem>编辑记录</DropdownMenuItem>
-                        <DropdownMenuItem>导出记录</DropdownMenuItem>
+                        <DropdownMenuItem onClick={() => {
+                          setSelectedRecord(record);
+                          setIsDetailOpen(true);
+                        }}>
+                          查看详情
+                        </DropdownMenuItem>
+                        <DropdownMenuItem onClick={() => {
+                          setSelectedRecord(record);
+                          setEditingRecord({
+                            clockIn: record.clockIn,
+                            clockOut: record.clockOut,
+                            status: record.status,
+                          });
+                          setIsEditOpen(true);
+                        }}>
+                          编辑记录
+                        </DropdownMenuItem>
+                        <DropdownMenuItem onClick={() => handleExportSingleRecord(record)}>
+                          导出记录
+                        </DropdownMenuItem>
                       </DropdownMenuContent>
                     </DropdownMenu>
                   </TableCell>
@@ -333,6 +485,151 @@ const Attendance = () => {
           </div>
         </div>
       </GlassCard>
+
+      {/* Add Detail Dialog */}
+      <Dialog open={isDetailOpen} onOpenChange={setIsDetailOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>考勤详情</DialogTitle>
+          </DialogHeader>
+          {selectedRecord && (
+            <div className="space-y-6">
+              <div className="flex items-center space-x-4">
+                <div className="w-12 h-12 rounded-full overflow-hidden">
+                  <img 
+                    src={selectedRecord.avatar} 
+                    alt={selectedRecord.name}
+                    className="w-full h-full object-cover"
+                  />
+                </div>
+                <div>
+                  <h4 className="font-medium">{selectedRecord.name}</h4>
+                  <p className="text-sm text-muted-foreground">{selectedRecord.department}</p>
+                </div>
+              </div>
+              
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <Label>上班打卡</Label>
+                  <div className="mt-1 text-lg font-medium">
+                    {selectedRecord.clockIn || '-'}
+                  </div>
+                </div>
+                <div>
+                  <Label>下班打卡</Label>
+                  <div className="mt-1 text-lg font-medium">
+                    {selectedRecord.clockOut || '-'}
+                  </div>
+                </div>
+              </div>
+              
+              <div>
+                <Label>考勤状态</Label>
+                <div className="mt-2">
+                  <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${statusMap[selectedRecord.status as keyof typeof statusMap].color}`}>
+                    {statusMap[selectedRecord.status as keyof typeof statusMap].label}
+                  </span>
+                </div>
+              </div>
+              
+              <div>
+                <Label>备注信息</Label>
+                <p className="mt-1 text-sm text-muted-foreground">
+                  {selectedRecord.status === 'late' ? '迟到打卡' : 
+                   selectedRecord.status === 'early' ? '早退打卡' :
+                   selectedRecord.status === 'absent' ? '全天缺勤' : '正常打卡'}
+                </p>
+              </div>
+            </div>
+          )}
+        </DialogContent>
+      </Dialog>
+
+      {/* Add Edit Dialog */}
+      <Dialog open={isEditOpen} onOpenChange={setIsEditOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>编辑考勤记录</DialogTitle>
+            <DialogDescription>
+              修改员工的考勤记录信息。
+            </DialogDescription>
+          </DialogHeader>
+          {selectedRecord && (
+            <div className="space-y-4">
+              <div className="flex items-center space-x-4 mb-4">
+                <div className="w-10 h-10 rounded-full overflow-hidden">
+                  <img 
+                    src={selectedRecord.avatar} 
+                    alt={selectedRecord.name}
+                    className="w-full h-full object-cover"
+                  />
+                </div>
+                <div>
+                  <div className="font-medium">{selectedRecord.name}</div>
+                  <div className="text-sm text-muted-foreground">{selectedRecord.department}</div>
+                </div>
+              </div>
+              
+              <div className="grid gap-4">
+                <div className="grid gap-2">
+                  <Label htmlFor="clockIn">上班打卡时间</Label>
+                  <Input
+                    id="clockIn"
+                    type="time"
+                    value={editingRecord.clockIn}
+                    onChange={(e) => setEditingRecord({
+                      ...editingRecord,
+                      clockIn: e.target.value
+                    })}
+                  />
+                </div>
+                
+                <div className="grid gap-2">
+                  <Label htmlFor="clockOut">下班打卡时间</Label>
+                  <Input
+                    id="clockOut"
+                    type="time"
+                    value={editingRecord.clockOut}
+                    onChange={(e) => setEditingRecord({
+                      ...editingRecord,
+                      clockOut: e.target.value
+                    })}
+                  />
+                </div>
+                
+                <div className="grid gap-2">
+                  <Label>考勤状态</Label>
+                  <Select 
+                    value={editingRecord.status}
+                    onValueChange={(value) => setEditingRecord({
+                      ...editingRecord,
+                      status: value
+                    })}
+                  >
+                    <SelectTrigger>
+                      <SelectValue placeholder="选择考勤状态" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="normal">正常</SelectItem>
+                      <SelectItem value="late">迟到</SelectItem>
+                      <SelectItem value="early">早退</SelectItem>
+                      <SelectItem value="absent">缺勤</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
+            </div>
+          )}
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setIsEditOpen(false)}>
+              取消
+            </Button>
+            <Button onClick={handleEditRecord}>
+              保存更改
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </MainLayout>
   );
 };
