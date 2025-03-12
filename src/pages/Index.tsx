@@ -1,233 +1,585 @@
-
 import React from 'react';
-import { Users, Building2, Clock, ArrowUpRight, Briefcase, Calendar, Percent } from 'lucide-react';
+import { useAuth } from '@/hooks/useAuth';
 import MainLayout from '@/components/layout/MainLayout';
-import StatCard from '@/components/dashboard/StatCard';
-import EmployeeList from '@/components/dashboard/EmployeeList';
 import GlassCard from '@/components/ui/GlassCard';
+import { 
+  LayoutDashboard,
+  Users,
+  Building2,
+  Calendar,
+  Clock,
+  CheckSquare,
+  AlertTriangle,
+  FileText,
+  UserPlus
+} from 'lucide-react';
+import { Button } from '@/components/ui/button';
 import { Progress } from '@/components/ui/progress';
-import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 
-const attendanceData = [
-  { date: '周一', count: 95 },
-  { date: '周二', count: 97 },
-  { date: '周三', count: 94 },
-  { date: '周四', count: 96 },
-  { date: '周五', count: 93 },
-  { date: '周六', count: 40 },
-  { date: '周日', count: 25 },
-];
+const AdminDashboard = () => {
+  return (
+    <div className="space-y-6">
+      {/* 系统概览 */}
+      <h2 className="text-2xl font-bold">系统概览</h2>
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <GlassCard className="p-6">
+          <div className="flex justify-between items-start">
+            <div>
+              <p className="text-sm font-medium text-muted-foreground">员工总数</p>
+              <h3 className="text-2xl font-bold mt-2">134</h3>
+            </div>
+            <div className="bg-primary/10 p-2 rounded-full">
+              <Users className="text-primary h-6 w-6" />
+            </div>
+          </div>
+          <div className="mt-4">
+            <p className="text-sm text-green-600">+2.5%</p>
+            <p className="text-xs text-muted-foreground">较上月</p>
+          </div>
+        </GlassCard>
+        
+        <GlassCard className="p-6">
+          <div className="flex justify-between items-start">
+            <div>
+              <p className="text-sm font-medium text-muted-foreground">部门数量</p>
+              <h3 className="text-2xl font-bold mt-2">8</h3>
+            </div>
+            <div className="bg-blue-50 p-2 rounded-full">
+              <Building2 className="text-blue-500 h-6 w-6" />
+            </div>
+          </div>
+          <div className="mt-4">
+            <p className="text-sm text-blue-600">+1</p>
+            <p className="text-xs text-muted-foreground">较上月</p>
+          </div>
+        </GlassCard>
+        
+        <GlassCard className="p-6">
+          <div className="flex justify-between items-start">
+            <div>
+              <p className="text-sm font-medium text-muted-foreground">在职率</p>
+              <h3 className="text-2xl font-bold mt-2">96.7%</h3>
+            </div>
+            <div className="bg-green-50 p-2 rounded-full">
+              <CheckSquare className="text-green-500 h-6 w-6" />
+            </div>
+          </div>
+          <div className="mt-4">
+            <p className="text-sm text-green-600">+0.5%</p>
+            <p className="text-xs text-muted-foreground">较上月</p>
+          </div>
+        </GlassCard>
+        
+        <GlassCard className="p-6">
+          <div className="flex justify-between items-start">
+            <div>
+              <p className="text-sm font-medium text-muted-foreground">待审批</p>
+              <h3 className="text-2xl font-bold mt-2">12</h3>
+            </div>
+            <div className="bg-amber-50 p-2 rounded-full">
+              <AlertTriangle className="text-amber-500 h-6 w-6" />
+            </div>
+          </div>
+          <div className="mt-4">
+            <p className="text-sm text-amber-600">3 个紧急</p>
+            <p className="text-xs text-muted-foreground">需要处理</p>
+          </div>
+        </GlassCard>
+      </div>
 
-const departmentProgress = [
-  { name: '研发部', progress: 78 },
-  { name: '市场部', progress: 65 },
-  { name: '人事部', progress: 92 },
-  { name: '财务部', progress: 84 },
-];
+      {/* 员工分布 */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <GlassCard className="p-6">
+          <h3 className="text-lg font-semibold mb-4">部门员工分布</h3>
+          <div className="space-y-4">
+            <div>
+              <div className="flex justify-between mb-1 text-sm">
+                <span>研发部</span>
+                <span>45人</span>
+              </div>
+              <Progress value={33} className="h-2" />
+            </div>
+            <div>
+              <div className="flex justify-between mb-1 text-sm">
+                <span>市场部</span>
+                <span>32人</span>
+              </div>
+              <Progress value={24} className="h-2" />
+            </div>
+            <div>
+              <div className="flex justify-between mb-1 text-sm">
+                <span>产品部</span>
+                <span>26人</span>
+              </div>
+              <Progress value={19} className="h-2" />
+            </div>
+            <div>
+              <div className="flex justify-between mb-1 text-sm">
+                <span>人事部</span>
+                <span>15人</span>
+              </div>
+              <Progress value={11} className="h-2" />
+            </div>
+            <div>
+              <div className="flex justify-between mb-1 text-sm">
+                <span>财务部</span>
+                <span>16人</span>
+              </div>
+              <Progress value={12} className="h-2" />
+            </div>
+          </div>
+        </GlassCard>
 
-// Mock employee data
-const employees = [
-  {
-    id: '1',
-    name: '张明',
-    position: '高级工程师',
-    department: '研发部',
-    email: 'zhang.ming@example.com',
-    phone: '138-1234-5678',
-    avatar: 'https://images.unsplash.com/photo-1560250097-0b93528c311a?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=256&q=80',
-  },
-  {
-    id: '2',
-    name: '李娜',
-    position: '产品经理',
-    department: '产品部',
-    email: 'li.na@example.com',
-    phone: '139-8765-4321',
-    avatar: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=256&q=80',
-  },
-  {
-    id: '3',
-    name: '王强',
-    position: '市场总监',
-    department: '市场部',
-    email: 'wang.qiang@example.com',
-    phone: '137-2468-1357',
-    avatar: 'https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=256&q=80',
-  },
-  {
-    id: '4',
-    name: '赵琳',
-    position: '人力资源主管',
-    department: '人事部',
-    email: 'zhao.lin@example.com',
-    phone: '135-1357-2468',
-    avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=256&q=80',
-  },
-  {
-    id: '5',
-    name: '刘伟',
-    position: '财务主管',
-    department: '财务部',
-    email: 'liu.wei@example.com',
-    phone: '136-8642-1975',
-    avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=256&q=80',
-  },
-];
+        <GlassCard className="p-6">
+          <h3 className="text-lg font-semibold mb-4">系统公告</h3>
+          <div className="space-y-4">
+            <div className="border-l-4 border-primary pl-4 py-2">
+              <h4 className="font-medium">系统更新通知</h4>
+              <p className="text-sm text-muted-foreground mt-1">系统将于本周日凌晨2:00-4:00进行维护更新，请提前做好工作安排。</p>
+              <p className="text-xs text-muted-foreground mt-2">2023-05-10</p>
+            </div>
+            <div className="border-l-4 border-green-500 pl-4 py-2">
+              <h4 className="font-medium">五一假期安排</h4>
+              <p className="text-sm text-muted-foreground mt-1">根据国家规定，今年五一劳动节放假调休共5天，具体安排请查看详情。</p>
+              <p className="text-xs text-muted-foreground mt-2">2023-04-20</p>
+            </div>
+            <div className="border-l-4 border-blue-500 pl-4 py-2">
+              <h4 className="font-medium">新员工培训通知</h4>
+              <p className="text-sm text-muted-foreground mt-1">本月新入职员工培训将于下周一上午9:00在3号会议室进行。</p>
+              <p className="text-xs text-muted-foreground mt-2">2023-04-15</p>
+            </div>
+          </div>
+        </GlassCard>
+      </div>
+    </div>
+  );
+};
+
+const HRDashboard = () => {
+  return (
+    <div className="space-y-6">
+      {/* HR概览 */}
+      <h2 className="text-2xl font-bold">人事概览</h2>
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <GlassCard className="p-6">
+          <div className="flex justify-between items-start">
+            <div>
+              <p className="text-sm font-medium text-muted-foreground">员工总数</p>
+              <h3 className="text-2xl font-bold mt-2">134</h3>
+            </div>
+            <div className="bg-primary/10 p-2 rounded-full">
+              <Users className="text-primary h-6 w-6" />
+            </div>
+          </div>
+          <div className="mt-4 flex">
+            <Button size="sm" variant="outline" className="mr-2">
+              <UserPlus className="h-4 w-4 mr-1" />
+              添加员工
+            </Button>
+          </div>
+        </GlassCard>
+        
+        <GlassCard className="p-6">
+          <div className="flex justify-between items-start">
+            <div>
+              <p className="text-sm font-medium text-muted-foreground">待审批休假</p>
+              <h3 className="text-2xl font-bold mt-2">5</h3>
+            </div>
+            <div className="bg-blue-50 p-2 rounded-full">
+              <Calendar className="text-blue-500 h-6 w-6" />
+            </div>
+          </div>
+          <div className="mt-4">
+            <Button size="sm" variant="outline">
+              审批休假
+            </Button>
+          </div>
+        </GlassCard>
+        
+        <GlassCard className="p-6">
+          <div className="flex justify-between items-start">
+            <div>
+              <p className="text-sm font-medium text-muted-foreground">考勤异常</p>
+              <h3 className="text-2xl font-bold mt-2">3</h3>
+            </div>
+            <div className="bg-red-50 p-2 rounded-full">
+              <Clock className="text-red-500 h-6 w-6" />
+            </div>
+          </div>
+          <div className="mt-4">
+            <Button size="sm" variant="outline">
+              处理考勤
+            </Button>
+          </div>
+        </GlassCard>
+        
+        <GlassCard className="p-6">
+          <div className="flex justify-between items-start">
+            <div>
+              <p className="text-sm font-medium text-muted-foreground">本月入职</p>
+              <h3 className="text-2xl font-bold mt-2">8</h3>
+            </div>
+            <div className="bg-green-50 p-2 rounded-full">
+              <UserPlus className="text-green-500 h-6 w-6" />
+            </div>
+          </div>
+          <div className="mt-4">
+            <Button size="sm" variant="outline">
+              查看详情
+            </Button>
+          </div>
+        </GlassCard>
+      </div>
+
+      {/* 最近活动 */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <GlassCard className="p-6">
+          <h3 className="text-lg font-semibold mb-4">待处理事项</h3>
+          <div className="space-y-4">
+            <div className="flex items-center justify-between border-b pb-3">
+              <div>
+                <p className="font-medium">张明请假审批</p>
+                <p className="text-sm text-muted-foreground">2天年假 (05-15至05-16)</p>
+              </div>
+              <Button size="sm">审批</Button>
+            </div>
+            <div className="flex items-center justify-between border-b pb-3">
+              <div>
+                <p className="font-medium">新员工入职</p>
+                <p className="text-sm text-muted-foreground">李明 - 产品经理 (05-20)</p>
+              </div>
+              <Button size="sm">准备</Button>
+            </div>
+            <div className="flex items-center justify-between border-b pb-3">
+              <div>
+                <p className="font-medium">部门调动申请</p>
+                <p className="text-sm text-muted-foreground">王强 - 研发部→产品部</p>
+              </div>
+              <Button size="sm">处理</Button>
+            </div>
+          </div>
+        </GlassCard>
+
+        <GlassCard className="p-6">
+          <h3 className="text-lg font-semibold mb-4">最近员工活动</h3>
+          <div className="space-y-4">
+            <div className="border-l-4 border-green-500 pl-4 py-2">
+              <h4 className="font-medium">张明</h4>
+              <p className="text-sm text-muted-foreground mt-1">提交了年假申请 (2天)</p>
+              <p className="text-xs text-muted-foreground mt-1">10分钟前</p>
+            </div>
+            <div className="border-l-4 border-blue-500 pl-4 py-2">
+              <h4 className="font-medium">李娜</h4>
+              <p className="text-sm text-muted-foreground mt-1">更新了个人联系信息</p>
+              <p className="text-xs text-muted-foreground mt-1">2小时前</p>
+            </div>
+            <div className="border-l-4 border-amber-500 pl-4 py-2">
+              <h4 className="font-medium">王强</h4>
+              <p className="text-sm text-muted-foreground mt-1">提交了部门调动申请</p>
+              <p className="text-xs text-muted-foreground mt-1">昨天 15:30</p>
+            </div>
+          </div>
+        </GlassCard>
+      </div>
+    </div>
+  );
+};
+
+const ManagerDashboard = () => {
+  return (
+    <div className="space-y-6">
+      {/* 部门概览 */}
+      <h2 className="text-2xl font-bold">部门概览</h2>
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <GlassCard className="p-6">
+          <div className="flex justify-between items-start">
+            <div>
+              <p className="text-sm font-medium text-muted-foreground">团队成员</p>
+              <h3 className="text-2xl font-bold mt-2">18</h3>
+            </div>
+            <div className="bg-primary/10 p-2 rounded-full">
+              <Users className="text-primary h-6 w-6" />
+            </div>
+          </div>
+          <div className="mt-4">
+            <Button size="sm" variant="outline">
+              查看团队
+            </Button>
+          </div>
+        </GlassCard>
+        
+        <GlassCard className="p-6">
+          <div className="flex justify-between items-start">
+            <div>
+              <p className="text-sm font-medium text-muted-foreground">待审批</p>
+              <h3 className="text-2xl font-bold mt-2">3</h3>
+            </div>
+            <div className="bg-amber-50 p-2 rounded-full">
+              <AlertTriangle className="text-amber-500 h-6 w-6" />
+            </div>
+          </div>
+          <div className="mt-4">
+            <Button size="sm" variant="outline">
+              去审批
+            </Button>
+          </div>
+        </GlassCard>
+        
+        <GlassCard className="p-6">
+          <div className="flex justify-between items-start">
+            <div>
+              <p className="text-sm font-medium text-muted-foreground">今日出勤</p>
+              <h3 className="text-2xl font-bold mt-2">16/18</h3>
+            </div>
+            <div className="bg-green-50 p-2 rounded-full">
+              <CheckSquare className="text-green-500 h-6 w-6" />
+            </div>
+          </div>
+          <div className="mt-4">
+            <Button size="sm" variant="outline">
+              查看详情
+            </Button>
+          </div>
+        </GlassCard>
+        
+        <GlassCard className="p-6">
+          <div className="flex justify-between items-start">
+            <div>
+              <p className="text-sm font-medium text-muted-foreground">在休假</p>
+              <h3 className="text-2xl font-bold mt-2">2</h3>
+            </div>
+            <div className="bg-blue-50 p-2 rounded-full">
+              <Calendar className="text-blue-500 h-6 w-6" />
+            </div>
+          </div>
+          <div className="mt-4">
+            <Button size="sm" variant="outline">
+              查看日历
+            </Button>
+          </div>
+        </GlassCard>
+      </div>
+
+      {/* 团队信息 */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <GlassCard className="p-6">
+          <h3 className="text-lg font-semibold mb-4">团队请假日历</h3>
+          <div className="space-y-4">
+            <div className="flex items-center border-b pb-3">
+              <div className="h-10 w-10 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 mr-3">
+                <span>张</span>
+              </div>
+              <div>
+                <p className="font-medium">张明</p>
+                <p className="text-sm text-muted-foreground">年假 (05-15至05-16)</p>
+              </div>
+            </div>
+            <div className="flex items-center border-b pb-3">
+              <div className="h-10 w-10 rounded-full bg-green-100 flex items-center justify-center text-green-600 mr-3">
+                <span>李</span>
+              </div>
+              <div>
+                <p className="font-medium">李娜</p>
+                <p className="text-sm text-muted-foreground">病假 (05-12)</p>
+              </div>
+            </div>
+            <div className="flex items-center">
+              <div className="h-10 w-10 rounded-full bg-amber-100 flex items-center justify-center text-amber-600 mr-3">
+                <span>王</span>
+              </div>
+              <div>
+                <p className="font-medium">王强</p>
+                <p className="text-sm text-muted-foreground">调休 (05-20)</p>
+              </div>
+            </div>
+          </div>
+        </GlassCard>
+
+        <GlassCard className="p-6">
+          <h3 className="text-lg font-semibold mb-4">待审批事项</h3>
+          <div className="space-y-4">
+            <div className="border-l-4 border-blue-500 pl-4 py-2">
+              <h4 className="font-medium">休假申请</h4>
+              <p className="text-sm text-muted-foreground mt-1">张明申请年假2天 (05-15至05-16)</p>
+              <div className="mt-2 flex gap-2">
+                <Button size="sm" variant="default">批准</Button>
+                <Button size="sm" variant="outline">拒绝</Button>
+              </div>
+            </div>
+            <div className="border-l-4 border-amber-500 pl-4 py-2">
+              <h4 className="font-medium">加班申请</h4>
+              <p className="text-sm text-muted-foreground mt-1">李娜申请下周六加班</p>
+              <div className="mt-2 flex gap-2">
+                <Button size="sm" variant="default">批准</Button>
+                <Button size="sm" variant="outline">拒绝</Button>
+              </div>
+            </div>
+            <div className="border-l-4 border-green-500 pl-4 py-2">
+              <h4 className="font-medium">外出申请</h4>
+              <p className="text-sm text-muted-foreground mt-1">王强申请下周三外出客户拜访</p>
+              <div className="mt-2 flex gap-2">
+                <Button size="sm" variant="default">批准</Button>
+                <Button size="sm" variant="outline">拒绝</Button>
+              </div>
+            </div>
+          </div>
+        </GlassCard>
+      </div>
+    </div>
+  );
+};
+
+const EmployeeDashboard = () => {
+  return (
+    <div className="space-y-6">
+      {/* 个人状态 */}
+      <h2 className="text-2xl font-bold">个人状态</h2>
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <GlassCard className="p-6">
+          <div className="flex justify-between items-start">
+            <div>
+              <p className="text-sm font-medium text-muted-foreground">今日考勤</p>
+              <h3 className="text-2xl font-bold mt-2">已签到</h3>
+            </div>
+            <div className="bg-green-50 p-2 rounded-full">
+              <CheckSquare className="text-green-500 h-6 w-6" />
+            </div>
+          </div>
+          <div className="mt-4">
+            <p className="text-sm text-green-600">09:02 签到</p>
+            <p className="text-xs text-muted-foreground">未签退</p>
+          </div>
+        </GlassCard>
+        
+        <GlassCard className="p-6">
+          <div className="flex justify-between items-start">
+            <div>
+              <p className="text-sm font-medium text-muted-foreground">剩余年假</p>
+              <h3 className="text-2xl font-bold mt-2">10天</h3>
+            </div>
+            <div className="bg-blue-50 p-2 rounded-full">
+              <Calendar className="text-blue-500 h-6 w-6" />
+            </div>
+          </div>
+          <div className="mt-4">
+            <Button size="sm" variant="outline">
+              申请休假
+            </Button>
+          </div>
+        </GlassCard>
+        
+        <GlassCard className="p-6">
+          <div className="flex justify-between items-start">
+            <div>
+              <p className="text-sm font-medium text-muted-foreground">待办事项</p>
+              <h3 className="text-2xl font-bold mt-2">3</h3>
+            </div>
+            <div className="bg-amber-50 p-2 rounded-full">
+              <AlertTriangle className="text-amber-500 h-6 w-6" />
+            </div>
+          </div>
+          <div className="mt-4">
+            <Button size="sm" variant="outline">
+              查看待办
+            </Button>
+          </div>
+        </GlassCard>
+        
+        <GlassCard className="p-6">
+          <div className="flex justify-between items-start">
+            <div>
+              <p className="text-sm font-medium text-muted-foreground">我的文档</p>
+              <h3 className="text-2xl font-bold mt-2">12</h3>
+            </div>
+            <div className="bg-purple-50 p-2 rounded-full">
+              <FileText className="text-purple-500 h-6 w-6" />
+            </div>
+          </div>
+          <div className="mt-4">
+            <Button size="sm" variant="outline">
+              查看文档
+            </Button>
+          </div>
+        </GlassCard>
+      </div>
+
+      {/* 个人信息 */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <GlassCard className="p-6">
+          <h3 className="text-lg font-semibold mb-4">我的申请</h3>
+          <div className="space-y-4">
+            <div className="border-l-4 border-green-500 pl-4 py-2">
+              <h4 className="font-medium">年假申请</h4>
+              <p className="text-sm text-muted-foreground mt-1">2天 (2023-05-15至2023-05-16)</p>
+              <p className="text-xs mt-1 inline-flex items-center bg-green-100 text-green-800 rounded-full px-2 py-0.5">已批准</p>
+            </div>
+            <div className="border-l-4 border-amber-500 pl-4 py-2">
+              <h4 className="font-medium">调休申请</h4>
+              <p className="text-sm text-muted-foreground mt-1">1天 (2023-04-28)</p>
+              <p className="text-xs mt-1 inline-flex items-center bg-amber-100 text-amber-800 rounded-full px-2 py-0.5">审批中</p>
+            </div>
+            <div className="border-l-4 border-blue-500 pl-4 py-2">
+              <h4 className="font-medium">报销申请</h4>
+              <p className="text-sm text-muted-foreground mt-1">差旅费 ¥1,250</p>
+              <p className="text-xs mt-1 inline-flex items-center bg-blue-100 text-blue-800 rounded-full px-2 py-0.5">已提交</p>
+            </div>
+          </div>
+          <div className="mt-4">
+            <Button size="sm" variant="outline" className="w-full">
+              新建申请
+            </Button>
+          </div>
+        </GlassCard>
+
+        <GlassCard className="p-6">
+          <h3 className="text-lg font-semibold mb-4">公司通知</h3>
+          <div className="space-y-4">
+            <div className="border-l-4 border-primary pl-4 py-2">
+              <h4 className="font-medium">系统更新通知</h4>
+              <p className="text-sm text-muted-foreground mt-1">系统将于本周日凌晨2:00-4:00进行维护更新，请提前做好工作安排。</p>
+              <p className="text-xs text-muted-foreground mt-2">2023-05-10</p>
+            </div>
+            <div className="border-l-4 border-green-500 pl-4 py-2">
+              <h4 className="font-medium">五一假期安排</h4>
+              <p className="text-sm text-muted-foreground mt-1">根据国家规定，今年五一劳动节放假调休共5天，具体安排请查看详情。</p>
+              <p className="text-xs text-muted-foreground mt-2">2023-04-20</p>
+            </div>
+            <div className="border-l-4 border-blue-500 pl-4 py-2">
+              <h4 className="font-medium">新员工培训通知</h4>
+              <p className="text-sm text-muted-foreground mt-1">本月新入职员工培训将于下周一上午9:00在3号会议室进行。</p>
+              <p className="text-xs text-muted-foreground mt-2">2023-04-15</p>
+            </div>
+          </div>
+        </GlassCard>
+      </div>
+    </div>
+  );
+};
 
 const Index = () => {
+  const { user } = useAuth();
+
+  // 根据用户角色返回不同的仪表盘
+  const renderDashboard = () => {
+    if (!user) return null;
+    
+    switch (user.role) {
+      case 'ADMIN':
+        return <AdminDashboard />;
+      case 'HR':
+        return <HRDashboard />;
+      case 'MANAGER':
+        return <ManagerDashboard />;
+      case 'EMPLOYEE':
+        return <EmployeeDashboard />;
+      default:
+        return null;
+    }
+  };
+
   return (
     <MainLayout>
-      {/* Stats Row */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5 mb-6">
-        <StatCard 
-          title="员工总数" 
-          value={128} 
-          icon={Users}
-          trend={2.5}
-          iconClassName="bg-blue-100 text-blue-600"
-        />
-        <StatCard 
-          title="部门数量" 
-          value={8} 
-          icon={Building2}
-          iconClassName="bg-purple-100 text-purple-600"
-        />
-        <StatCard 
-          title="今日考勤" 
-          value={112} 
-          icon={Clock}
-          trend={-1.2}
-          valueFormatter={(value) => `${value}人`}
-          iconClassName="bg-amber-100 text-amber-600"
-        />
-        <StatCard 
-          title="本月入职" 
-          value={4} 
-          icon={ArrowUpRight}
-          trend={12.5}
-          trendLabel="相比上月"
-          iconClassName="bg-emerald-100 text-emerald-600"
-        />
-      </div>
-      
-      {/* Main Content */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* Left Column */}
-        <div className="lg:col-span-2 space-y-6">
-          {/* Attendance Chart */}
-          <GlassCard className="p-5">
-            <div className="flex justify-between items-center mb-4">
-              <h3 className="font-medium text-lg">本周考勤数据</h3>
-              <div className="text-sm text-muted-foreground">总体出勤率: 94%</div>
-            </div>
-            <div className="h-72">
-              <ResponsiveContainer width="100%" height="100%">
-                <AreaChart
-                  data={attendanceData}
-                  margin={{ top: 10, right: 10, left: 0, bottom: 0 }}
-                >
-                  <defs>
-                    <linearGradient id="colorAttendance" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="5%" stopColor="#0ea5e9" stopOpacity={0.8} />
-                      <stop offset="95%" stopColor="#0ea5e9" stopOpacity={0} />
-                    </linearGradient>
-                  </defs>
-                  <CartesianGrid strokeDasharray="3 3" vertical={false} strokeOpacity={0.2} />
-                  <XAxis dataKey="date" axisLine={false} tickLine={false} />
-                  <YAxis axisLine={false} tickLine={false} />
-                  <Tooltip 
-                    contentStyle={{ 
-                      backgroundColor: 'rgba(255, 255, 255, 0.8)',
-                      backdropFilter: 'blur(8px)',
-                      borderRadius: '8px',
-                      border: '1px solid rgba(230, 230, 230, 0.8)',
-                      boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)'
-                    }}
-                    formatter={(value) => [`${value}人`, '出勤人数']}
-                    labelFormatter={(label) => `${label}`}
-                  />
-                  <Area 
-                    type="monotone" 
-                    dataKey="count" 
-                    stroke="#0ea5e9" 
-                    fillOpacity={1} 
-                    fill="url(#colorAttendance)" 
-                  />
-                </AreaChart>
-              </ResponsiveContainer>
-            </div>
-          </GlassCard>
-          
-          {/* Recent Employees */}
-          <EmployeeList 
-            title="最近入职员工" 
-            employees={employees} 
-            viewAllLink="/employees"
-          />
-        </div>
-        
-        {/* Right Column */}
-        <div className="space-y-6">
-          {/* Department Progress */}
-          <GlassCard className="p-5">
-            <h3 className="font-medium text-lg mb-4">部门目标完成度</h3>
-            <div className="space-y-5">
-              {departmentProgress.map((dept) => (
-                <div key={dept.name} className="space-y-2">
-                  <div className="flex justify-between items-center">
-                    <span className="text-sm font-medium">{dept.name}</span>
-                    <span className="text-sm text-muted-foreground">{dept.progress}%</span>
-                  </div>
-                  <Progress value={dept.progress} className="h-2" />
-                </div>
-              ))}
-            </div>
-          </GlassCard>
-          
-          {/* Quick Stats */}
-          <div className="grid grid-cols-2 gap-4">
-            <GlassCard className="p-4 hover-scale">
-              <div className="flex flex-col items-center text-center">
-                <div className="w-10 h-10 bg-indigo-100 text-indigo-600 rounded-full flex items-center justify-center mb-2">
-                  <Briefcase className="w-5 h-5" />
-                </div>
-                <div className="text-2xl font-bold">6</div>
-                <div className="text-xs text-muted-foreground">进行中的项目</div>
-              </div>
-            </GlassCard>
-            
-            <GlassCard className="p-4 hover-scale">
-              <div className="flex flex-col items-center text-center">
-                <div className="w-10 h-10 bg-amber-100 text-amber-600 rounded-full flex items-center justify-center mb-2">
-                  <Calendar className="w-5 h-5" />
-                </div>
-                <div className="text-2xl font-bold">8</div>
-                <div className="text-xs text-muted-foreground">请假申请</div>
-              </div>
-            </GlassCard>
-            
-            <GlassCard className="p-4 hover-scale">
-              <div className="flex flex-col items-center text-center">
-                <div className="w-10 h-10 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center mb-2">
-                  <Percent className="w-5 h-5" />
-                </div>
-                <div className="text-2xl font-bold">94%</div>
-                <div className="text-xs text-muted-foreground">员工满意度</div>
-              </div>
-            </GlassCard>
-            
-            <GlassCard className="p-4 hover-scale">
-              <div className="flex flex-col items-center text-center">
-                <div className="w-10 h-10 bg-rose-100 text-rose-600 rounded-full flex items-center justify-center mb-2">
-                  <Clock className="w-5 h-5" />
-                </div>
-                <div className="text-2xl font-bold">24</div>
-                <div className="text-xs text-muted-foreground">加班时长</div>
-              </div>
-            </GlassCard>
-          </div>
-        </div>
-      </div>
+      {renderDashboard()}
     </MainLayout>
   );
 };
