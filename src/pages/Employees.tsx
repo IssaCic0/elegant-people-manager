@@ -162,6 +162,7 @@ const Employees = () => {
           ...emp,
           phone: '***********', // 隐藏电话号码
           email: emp.email.split('@')[0].slice(0, 3) + '****@' + emp.email.split('@')[1], // 部分隐藏邮箱
+          department: '***' // 需要隐藏部门信息
         }));
       default:
         return [];

@@ -205,6 +205,7 @@ const MyDocuments = () => {
   const [selectedDocument, setSelectedDocument] = useState<PersonalDocument | null>(null);
   const [uploadProgress, setUploadProgress] = useState(0);
   const [isUploading, setIsUploading] = useState(false);
+  const [uploadingFile, setUploadingFile] = useState<File | null>(null);
   
   // 过滤文档
   const filteredDocuments = mockPersonalDocuments.filter(doc => {

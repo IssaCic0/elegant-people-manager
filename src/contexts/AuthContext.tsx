@@ -1,3 +1,4 @@
+/* eslint-disable react-refresh/only-export-components */
 import React, { createContext, useState, useEffect } from 'react';
 import { User, AuthState } from '@/types/auth';
 
@@ -18,10 +19,10 @@ const mockUsers = [
 // 部门映射
 const departmentMap = {
   1: '研发部',
-  2: '产品部',
-  3: '市场部',
+  2: '市场部',
+  3: '财务部',
   4: '人事部',
-  5: '财务部',
+  5: '行政部'
 };
 
 interface AuthContextType extends AuthState {

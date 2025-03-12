@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { User, Mail, Phone, Building2, BookOpen, MapPin } from 'lucide-react';
 import MainLayout from '@/components/layout/MainLayout';
@@ -35,7 +34,7 @@ const Profile = () => {
                 <h2 className="text-2xl font-bold">{userInfo.name}</h2>
                 <p className="text-muted-foreground">{userInfo.title}</p>
                 <div className="flex flex-wrap gap-2 mt-2">
-                  {skills.map((skill, index) => (
+                  {['React', 'TypeScript', '项目管理'].map((skill, index) => (
                     <span
                       key={index}
                       className="px-2 py-1 text-xs rounded-full bg-primary/10 text-primary"
